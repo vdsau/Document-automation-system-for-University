@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<head>
+<base target="_top">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<header>
+<div style='display:relative;'> <? 
+var userName=getName().given_name;
+var _name=(userName!=='')?",<strong style='color:royalblue; font-size:1.2em;'>&nbsp;"+userName+"</strong>":'';
+?>
+<div class="greetings_" style='float:left;'> Вітання<?!= _name; ?>!<br>
+Ви ввійшли як: <strong style='color:royalblue; font-size:1.2em;'><?!= toUpper(user.STATUS,0); ?></strong>.<br>
+Ваша кількість заяв на сьогодні: <strong id='_triesScore' style='color:royalblue; font-size:1.2em;'><?!= triesScore(); ?></strong>.
+</div><!---greetings_--->
+
+<div class="nav_menu2">
+<!---======================================--->
+<button id="menu_button" class="noselect"onclick="openNav()">Меню &#9776;</button>
+
+</div><!--nav_menu2-->
+</div><!--display-->
+
+
+<div id="Sidebar_menu" class="side_menu">
+<a href="javascript:void(0)" class="closebtn noselect" onclick="closeNav()">&times;</a>
+<button class="sidemenu_button noselect" onclick="t('categories'); closeNav()">Всі категорії</button>
+
+
+<?
+if(user.ADMIN===true){
+?>
+<div class="section">
+<div class="sidemenu_section_name noselect">Адміністрування:</div>
+      <button class="sidemenu_button noselect" onclick="t('userManagement'); closeNav()">Керування користувачами</button>
+      <button class="sidemenu_button noselect" onclick="t('settings'); closeNav()">Налаштування системи</button>
+</div><!---s3--->
+<? } 
+if(user.MANAGER===true){ 
+?>
+<div class="section">
+<div class="sidemenu_section_name noselect">Керування документами:</div>
+      <button class="sidemenu_button noselect" onclick="t('addTemplate'); closeNav()">Додати документ</button><!---width:222px--->
+      <button class="sidemenu_button noselect" onclick="t('processingAnswers'); closeNav()">Опрацювання документів</button>
+      <button class="sidemenu_button noselect" onclick="t('deleteDocument'); closeNav()">Видалити документ</button>
+ <!---    <button class="sidemenu_button noselect" onclick="t('testing'); closeNav()">Тестування </button> --->
+</div><!---s2--->
+<? } ?>
+
+<div class="section">
+<div class="sidemenu_section_name noselect">Документи:</div>
+<button class="sidemenu_button noselect" onclick="t('forms'); closeNav()">Подати документ</button>
+<button class="sidemenu_button noselect" onclick="t('history'); closeNav()" >Історія документів</button>
+</div><!---s1--->
+
+</div><!---sidenav--->
+
+<script>
+        function openNav() {
+            document.getElementById("Sidebar_menu").style.width = "300px";
+        }
+
+        function closeNav() {
+            if(document.getElementById("Sidebar_menu").style.width == "300px")
+            {
+                document.getElementById("Sidebar_menu").style.width = "0";
+            }
+        }
+</script>
+    
+<hr style='display:inline-block;width:100%;'><br>
+</header>

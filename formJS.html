@@ -1,0 +1,178 @@
+<script>
+
+  function isRequaired(item){
+  if(item!==undefined){
+  var parent=item.parentNode;
+   if(parent.tagName==='DIV'){
+    if(parent.id==='required') return true;
+   }else isRequaired(parent); }
+   return false;
+  }
+  
+  function getTitle(item){
+   if(item!==undefined){
+    var parent=item.parentNode;
+    if(parent.tagName==='DIV'){
+    return parent.getElementsByClassName('_itemTitle')[0].textContent;
+   }else getTitle(parent); 
+   return '';
+   }
+  }
+  
+  function getNote(){
+   var note=document.getElementById("_note").value;
+   return (note==='')?'':note;
+  }
+  
+  function defineSelect(item){
+   if(item!==undefined){
+   var res=[];
+   if(item.multiple===true){
+       for(var i=0; i<item.selectedOptions.length; i++)
+         res.push(item.selectedOptions[i].value);
+     }
+     else res.push(item.value);
+    return res;
+   }
+  return '';
+  }
+  
+  function defineChecked(item){
+  if(item!==undefined){
+  var res=[];
+   var elements=item.getElementsByClassName('_answerItem');
+    for(var i=0; i < elements.length; i++){
+    if(elements[i].checked){
+    if(elements[i].type==='checkbox'){  //checkbox
+        res.push(elements[i].value);
+        }
+     if(elements[i].type==='radio'){ //radiobutton
+        res.push(elements[i].value);
+        break;}
+       }
+     }
+   return res;
+  }
+  return '';
+}
+
+function defineDiv(item){
+if(item!==undefined){
+  var res=[];
+  var elements=item.getElementsByClassName('_answerItem');
+switch(item.id){
+  case 'time':
+   res.push(elements[0].value+":"+elements[0].value);
+   break;
+  case 'date':
+  if(elements[0].value <=0 || elements[0].value >31) res='_NAV';   //NAV- not A Value
+  else res.push(elements[0].value+"."+elements[1].value+"."+elements[2].value);
+   break;
+   default:
+   res.push(defineChecked(item));
+   break;
+   }
+   return res;
+ }
+return '';
+}
+  
+  function defineValue(item){
+  if(item!==undefined){
+  var resValue='';
+  switch(item.tagName){
+      case 'DIV':
+        resValue=defineDiv(item);
+        break;
+      case 'INPUT':
+        resValue=item.value;
+        break;
+      case 'TEXTAREA':
+        resValue=item.value;
+        break;
+      case 'SELECT':
+        resValue=defineSelect(item);
+        break;
+    }
+    return resValue.toString();
+  }
+  return '';
+  }
+  
+  function prepareRes(array){
+  var res=[];
+   for(var i=0; i< array.length; i++){
+     if(defineValue(array[i])==='_NAV') return '_NAV';
+     else{
+     if(isRequaired(array[i])){
+      if(defineValue(array[i])===undefined || defineValue(array[i])==='') return 0;
+       else{
+         res.push({title:getTitle(array[i]),
+         value:defineValue(array[i])});
+       }
+     }else{
+         res.push({title:getTitle(array[i]),
+         value:defineValue(array[i])});
+     }
+   }}
+   return res;
+  }
+  
+  function checkRes(res,id){
+   var str="<br>Відправка неможлива!<br><input type='button' style='margin-top:2%;' onclick=\"generateForm(\'"+id+"\');\" value='Повернутись до заповнення форми...'>";
+   var text='';
+   var temp={};
+   switch(res){
+    case '_NAV':
+    text="Введені некорректні дані!<br>Перевірте правильність введених даних.";
+     text+=str;
+     temp.code=0;
+     temp.msg=text;
+    break;
+    case '0':
+    text="Заповнено не всі поля!";
+     text+=str;
+     temp.code=0;
+     temp.msg=text;
+    break;
+    case 0:
+    text="Заповнено не всі поля!";
+     text+=str;
+     temp.code=0;
+     temp.msg=text;
+    break;
+    default:
+     temp.code=1;
+    break;
+   }
+     return temp;
+  }
+  
+  function updateTries(text){
+   google.script.run.withSuccessHandler(_updateTries).withUserObject(text).triesScore();
+  }
+  
+  function _updateTries(text,contentText){
+   document.getElementById('_triesScore').textContent=text;
+   addContent(contentText);
+  }
+  
+  function sendForm(form){
+ var id=document.getElementById('_formId').textContent;
+ var note=getNote();
+  addContent(animation);
+ if(form.fakeMsg.value!==undefined){
+    var res=prepareRes(form.getElementsByClassName('_answer'));
+    var temp=checkRes(res,id);
+     if(temp.code===0) addContent(temp.msg);
+     else {
+       google.script.run.withSuccessHandler(updateTries).sendForm(res,id,note);
+     }
+   }
+ }
+  
+  function generateForm(id){
+  addContent(animation);
+  google.script.run.withSuccessHandler(addContent).createForm(id);
+}
+</script>

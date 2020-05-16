@@ -1,0 +1,79 @@
+<?!= createHeader('Налаштування системи'); 
+var accept='Підтвердити';
+?>
+<div>
+<input class="container" id="div_container1" type="checkbox">
+<label for="div_container1">Статуси</label>
+<div><!--container-->
+<div>
+  <div id='_domains' style='width:30%;'>
+    <div><span>Встановлені домени та статуси:</span><br><br><table><thead>
+      <td>№</td>
+      <td>Домен</td>
+      <td>Статус</td>
+      </thead>
+        <tbody id='_domainTable'>
+<? var file=SpreadsheetApp.openById(getElementInList('Domain',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName(mainSheet).getDataRange().getValues(); 
+for(var row=1;row<file.length; row++){ ?>
+<tr><td><?!= row; ?></td>
+<? for(var col=0;col<file[row].length; col++) { ?>
+<td><?!= file[row][col].toString(); ?></td>
+<? } ?>
+</tr>
+<? } ?>
+         </tbody> </table>
+     </div>
+<hr>
+<div id='domainBlock' style='margin:2% 0;'><p><span>Домен та статус:</span><br><span style='margin-bottom:1%;font-size:0.9em;font-style:italic;'>наприклад, домен - std.edu.ua, статус - студент</span></p>
+Домен: <input id='domainValue' type='text'  style="margin-left:2px;" class="textbox_cl" value='<?!= parseEmail(Session.getActiveUser().getEmail()); ?>'><br>
+Статус: <input id='statusValue' type='text' class="textbox_cl"></div>
+</div>
+<input type='button' value='+' class="button_cl" onclick="addDomain();">
+<input type='button' value='-' class="button_cl" onclick="removeDomain();">
+<input type='button' value='Очистити' class="button_cl" onclick="clearDomains();"></div>
+<input type='button' value='<?!= accept; ?>' class="button_cl" onclick="changeDomainsList();"> 
+</div><!--container-->
+</div>
+
+<div>
+<input class="container" id="div_container2" type="checkbox">
+<label for="div_container2">Керування спробами</label>
+<div><!--container-->
+<p>Поточна кількість спроб: <strong id='_answerLimitScore' style='color:royalblue; font-size:1.2em;'><?!= getSettingByName(_sys_vars.answerLimit); ?></strong>.</p>
+<hr>
+<p>Нова кількість спроб: <input id='_newLimitScore' type="text" class="textbox_cl" name=""> <button class="button_cl" name="" onclick='changeAnswersLimit();' ><?!= accept; ?></button></p>
+</div><!--container-->
+</div>
+
+<div>
+<input class="container" id="div_container3" type="checkbox">
+<label for="div_container3">Категорії</label>
+<div><!--container-->
+<div><span>Встановлені категорії:</span><br><br><table><thead>
+<td>№</td>
+<td>Назва</td>
+</thead>
+<tbody id='_categoryTable'>
+<? var file=SpreadsheetApp.openById(getElementInList('General',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName('Categories').getDataRange().getValues(); 
+for(var row=1;row<file.length; row++){ ?>
+<tr><td><?!= row; ?></td>
+<? for(var col=0;col<file[row].length; col++) { ?>
+<td><?!= file[row][col].toString(); ?></td>
+<? } ?>
+</tr>
+<? } ?>
+</tbody>
+</table>
+</div>
+<hr>
+<p>Додати категорію: <input id='_newCategory' type="text" class="textbox_cl" name=""> <button class="button_cl" name="" onclick='changeCategorieList();' ><?!= accept; ?></button></p>
+</div><!--container-->
+</div>
+
+<div>
+<input class="container" id="div_container4" type="checkbox">
+<label for="div_container4">Видалити систему</label>
+<div><!--container-->
+<button id="delete_sys_button" onclick="deleteSystem();">Видалити систему</button>
+</div><!--container-->
+</div>

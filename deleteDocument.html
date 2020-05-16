@@ -1,0 +1,33 @@
+<?!= createHeader('Видалення документа'); ?>
+<div>
+<? var doc=getPinnedFormsList(); 
+if(doc.length===0){ ?>
+<p>Немає документів для видалення.</p>  
+<? } else { 
+var count=0;
+?>
+<table>
+<thead>
+<td>№</td>
+<td>Назва документа</td>
+<td>Призначення</td>
+<td>Дата створення</td>
+<? if(user.ADMIN) {?>
+<td>Автор</td>
+<? } ?>
+</thead><tbody>
+<? for(var i in doc){
+var file=DriveApp.getFileById(doc[i][0].form); 
+count+=1;
+?>
+<tr id="<?!= doc[i][0].form; ?>" onclick="_deleteDocument(this.id,'<?!= file.getName();?>','<?!= doc[i][1].toString(); ?>','<?!= doc[i][3].toString(); ?>');">
+<td><?!= count; ?></td>
+<td><?!= file.getName(); ?></td>
+<td><?!= doc[i][1].toString(); ?></td>
+<td><?!= doc[i][2].toString(); ?></td>
+<? if(user.ADMIN) {?><td><?!= doc[i][3].toString(); ?></td><? } ?>
+</tr>
+<? } } ?>
+</tbody>
+</table>
+<div/>

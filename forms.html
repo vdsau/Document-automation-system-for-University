@@ -1,0 +1,58 @@
+<div class="col-20 content">
+<p id="form_list_title"><strong>Перелік форм для подання:</strong></p>
+<div id="_formsList" class="form_list_div">
+<?
+var names;
+var icon=getAttach('icon').getUrl();
+var domain=SpreadsheetApp.openById(getElementInList('Domain',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName(mainSheet).getDataRange().getValues();
+if(user.ADMIN === true || user.MANAGER === true )   //загрузка содержимого согласно статусу
+names = getForms();
+else{
+for(var i in domain){
+if(user.STATUS === domain[i][1].toString()){
+names = getForms(user.STATUS);
+break;}
+ }
+}
+var numberOfButtons=Math.round(names.length/getSettingByName(_sys_vars.numberForms));
+var score=getSettingByName(_sys_vars.numberForms);
+var count=(names.length>score)?score:names.length; 
+var i=0;
+for(i=0; i<names.length;i++){   //count
+var file=names[i];
+
+
+
+//count*(i+1);
+
+
+
+
+?>
+<div class="form_item" id='<?!= file.id; ?>' onclick='generateForm(this.id);'>
+<!--<div class="form_item">-->
+<!--<div class="form_item_preview"></div>-->
+<img src="<?!= icon; ?>" class="form_item_image">
+<HR class="form_item_hr">
+<div class="form_item_link">
+<?!= file.name; ?> 
+</div><!--form_item_link-->
+<!--</div><!--form_item-->
+</div>
+<? } ?>
+</div><!--form_item-->
+</div><!--col-20 content 
+<div id="_pageNavigation"><center>
+<? if(numberOfButtons>5) { ?>
+<button title='Попередня сторінка' style="margin-top:1%;" class="button_cl" onclick="changeFormsPage();">&larr;</button>
+<? for(i=0; i<5; i++) {?>
+<button style="margin-top:1%;" class="button_cl" onclick="changeFormsPage();"><?!= i+1; ?></button>
+<? } ?>
+<button title='Наступна сторінка' style="margin-top:1%;" class="button_cl" onclick="changeFormsPage();">&rarr;</button>
+<? } else { 
+for(i=0; i<numberOfButtons; i++) { ?>
+<button style="margin-top:1%;" class="button_cl" onclick="changeFormsPage(<?!= count; ?>);"><?!= i+1; ?></button>
+<? } } ?>
+</center>
+</div>  -->
+ 

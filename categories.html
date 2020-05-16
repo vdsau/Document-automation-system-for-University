@@ -1,0 +1,31 @@
+<?!= createHeader('Перелік категорій'); ?>
+<div class="categories_list">
+<p class="title_">Доступні категорії:</p>
+<? var site=SitesApp.getActiveSite().getUrl(); ?>
+<dl>
+<!--<dt><a href='<?!= site ?>home/testova-storinka-mk-3'>Історія заяв</a></dt>-->
+<dt><div class="categories_title">Документи:</div></dt>
+<dd><button class="button_cl" onclick="t('forms');">Подати документ</button></dd>
+<dd><button class="button_cl" onclick="t('history');">Історія документів</button></dd>
+</dl>
+<? if(user.MANAGER===true) { ?>
+<dl>
+<!--<dt><a href='<?!= site ?>home/testova-storinka-mk-0'>Керування заявами</a></dt>-->
+<dt><div class="categories_title">Керування документами:</div></dt>
+<dd><button class="button_cl" onclick="t('addTemplate');">Додати документ</button></dd>
+<dd><button class="button_cl" onclick="t('processingAnswers');">Опрацювання документів</button></dd>
+<dd><button class="button_cl" onclick="t('deleteDocument');">Видалити документ</button></dd>
+<!--<dd><a href="#">Link 2</a></dd>
+<dd><a href="#">Link 3</a></dd>-->
+</dl>
+<? } ?>
+<?
+if(user.ADMIN===true){
+?>
+<dl>
+<dt><div class="categories_title">Адміністрування:</div></dt>
+<dd><button class="button_cl" onclick="t('userManagement');" >Керування користувачами</button></dd>
+<dd><button class="button_cl" onclick="t('content');" >Налаштування системи</button></dd>
+</dl>
+<?}?>
+</div><!--categories_list-->

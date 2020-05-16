@@ -1,0 +1,30 @@
+<script>
+
+function addTemplateJS(){
+google.script.run.withSuccessHandler(addTemplate).getDefaultText();
+}
+
+  function addTemplate(defaultText){
+  var form=document.getElementById('addForm');
+     if(form.destination.value===defaultText || form.formName.value=== defaultText || form.docsName.value=== defaultText || form.category.value=== defaultText) alert("Не всі поля заповнено!");
+     else {
+     addContent(animation);
+     var params={
+      title:form.title.value,
+      destination:form.destination.value,
+      idForm:form.formName.value,
+      idTempl:form.docsName.value,
+      category: form.category.value,
+     };
+     google.script.run.withSuccessHandler(addContent).addTemplate(params);
+    }
+  }
+  
+  function createFileName(){
+   var form=document.getElementById('addForm');
+   form.title.value=form.formName.options[form.formName.selectedIndex].text;
+  }
+  
+</script>
+
+

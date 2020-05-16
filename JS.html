@@ -1,0 +1,247 @@
+<script>
+   
+  function _deleteDocument(id,name,destination,email){
+   if(_deleteAccept("документ ("+name+") з системи")){
+   alert('Початок видалення!\nЗачекайте будь-ласка.');
+    var params={
+     name:name,
+     id:id,
+     destination:destination,
+     author:email,
+    };
+    google.script.run.withSuccessHandler(alert).deleteTemplate(params);
+   }
+  }
+  
+  function details(e,fileId,answerId,docName){
+     if(close()===false){
+     var params={
+     fileId: fileId,
+     sheetName:docName,
+     answerId:answerId};
+     addContent(animation);
+     google.script.run.withSuccessHandler(addWindow).withUserObject(e).createDetails(params);
+     }
+  }
+  
+  function deleteSystem(){
+  if(_deleteAccept('систему')){
+  addContent(animation);
+   google.script.run.withSuccessHandler(alert).withFailureHandler(notFound).deleteSystem(); 
+   }
+  }
+  
+  function getTableData(fileId){  //получить данные окна деталей
+   var mainWindow=document.getElementById('_detailWindow');
+   var res={};
+  var result=mainWindow.getElementsByTagName('tr');
+  for(var row=0;  row<result.length; row++) {
+  var name=result[row].id;
+  var array=[];
+   var temp=result[row].getElementsByTagName('td');
+   for(var col=1; col<temp.length; col++){
+     array.push(temp[col].textContent.toString());
+   }
+   if(name==='headers') res.headers=array;
+     else {
+     res.answerId=name;
+      res.content=array;
+       }
+     }
+     res.fileId=fileId;
+     res.sender=document.getElementById('_sender').textContent;
+     res.sheetName=document.getElementById('_sheetName').textContent;
+     res.closeButton=document.getElementById('_closeButton').outerHTML;
+     res.reason=document.getElementById('reasonText').value;
+     res.windowHTML=mainWindow.outerHTML;
+     return res;
+  }
+  
+  function visisbleReasonBlock(){
+  var reason=document.getElementById('reason');
+   if(reason.style.display ==='none' || reason.style.display==='') reason.style.display='block';
+   else reason.style.display='none';
+   var res={};
+   res.reason=reason;
+   res.acceptButton=document.getElementById('sendButton');
+    res.header=document.getElementById('reasonHeader');
+    return res;
+  }
+  
+  function denied(fileId){
+   var params=visisbleReasonBlock();
+   params.header.innerHTML="Причина <font style='color:red;'>*</font>:";
+   params.acceptButton.onclick=function (){
+    accept(fileId,'denied');
+   };
+  }
+  
+  function done(fileId){
+   var params=visisbleReasonBlock();
+   params.header.textContent='Примітка:';
+   params.acceptButton.onclick=function () {
+    accept(fileId,'done');
+     };
+  }
+  
+  function accept(fileId,type){
+  var res=getTableData(fileId);
+  addContentWindow(res.closeButton+animation);
+  switch(type){
+   case 'denied':
+    if(res.reason!=='') google.script.run.withSuccessHandler(t).denied(res);
+     else {
+      addContentWindow(res.closeButton+"<center><p style='margin-bottom:5%;'>Не заповнено всі поля!</p></center>");
+     }
+   break;
+   case 'done':
+  google.script.run.withSuccessHandler(t).done(res);
+   break;
+   default:
+    google.script.run.withSuccessHandler(addContentWindow).generateDocument(res);
+    break;
+   }
+  }
+  
+  function addContentWindow(text){
+   var window=document.getElementById('_detailWindow');
+   window.innerHTML=text;
+  }
+  
+  function close(){
+  var res;
+   var exist=document.getElementById('_detailWindow');
+  if(exist!==null){
+  exist.parentNode.removeChild(exist);
+  res=true;
+  t('processingAnswers');
+  }
+  else res=false;
+  return res;
+  }
+  
+  function addWindow(text){
+  var f=document.createElement('div');
+  f.id="_detailWindow";
+  f.innerHTML=text;
+  f.className="detailWindow";
+   addContent(f.outerHTML);
+  }
+  
+  function addHistory(text){
+   var table=document.getElementById('historyTable');
+   table.innerHTML=text;
+  }
+  
+  var wait='Зачекайте будь-ласка, йде завантаження...';
+  
+  function applyFilter(adminMode){
+   var title=document.getElementById('sheetName');
+   var rowCount=document.getElementById('sheetCount');
+   var status=document.getElementById('status');
+   if(adminMode===undefined || adminMode===null) adminMode=false;
+   
+  addHistory(wait);
+  var params={
+  sheetName:title.options[title.selectedIndex].value,
+  rowCount:rowCount.options[rowCount.selectedIndex].value,
+  status:status.options[status.selectedIndex].value,
+  adminMode:adminMode,
+  };
+  google.script.run.withSuccessHandler(addHistory).getHistory(params);
+  }
+  function clearHistory(managerMode){  //Bool mode-true если нужно очистить историю менеджера
+  addHistory(wait);
+  if(managerMode===true) google.script.run.withSuccessHandler(addHistory).clearHistory(true);
+  else google.script.run.withSuccessHandler(addHistory).clearHistory();
+  }
+  function addManager(email){
+   google.script.run.withSuccessHandler(alert).addManager(email);
+  }
+  
+  
+  var count=0;
+  
+  function addDomain(){
+  count++;
+  var temp=document.createElement('div');
+   var block=document.getElementById('_domains').appendChild(temp);
+   block.id='domainBlock'+count;
+   block.style='margin:2% 0;';
+   block.innerHTML="Домен: <input id='domainValue' type='text' style='margin-left:2px;' class='textbox_cl'><br>Статус: <input id='statusValue' type='text' class='textbox_cl'>";
+  }
+  
+  function removeDomain(){
+   var parent=document.getElementById('_domains');
+   var node=document.getElementById('domainBlock'+count);
+   parent.removeChild(node);
+    count--;
+  }
+  
+  function getDomains(){
+  var res=[];
+  var domain=document.getElementById('domainBlock').getElementsByTagName('INPUT');
+  res.push({name: domain[0].value,
+  status:domain[1].value,
+  });
+  if(count!==0){
+    for(var i=1;i<=count;i++){
+     var name='domainBlock'+i;
+     var d=document.getElementById(name).getElementsByTagName('INPUT');
+     res.push({name: d[0].value,
+            status:d[1].value,
+     });
+     }
+    }
+    return res;
+  }
+  
+  function clearDomains(){
+  var domain=document.getElementById('domainBlock').getElementsByTagName('INPUT');
+    for(var i=0; i<domain.length; i++) domain[i].value='';
+  if(count!==0){
+    for(var i=1;i<=count;i++){
+     var name='domainBlock'+i;
+     var d=document.getElementById(name).getElementsByTagName('INPUT');
+     for(var s=0; s<d.length; s++) d[s].value='';
+    }
+  }
+}
+
+function changeAnswersLimit(){
+    var res=function(value){
+     document.getElementById('_answerLimitScore').textContent=value;
+    };
+    google.script.run.withSuccessHandler(res).setSettingByName('answersLimit',document.getElementById('_newLimitScore').value);
+   }
+   
+    function changeDomainsList(){
+     var res=function(text){ 
+     document.getElementById('_domainTable').innerHTML=text;
+     };
+     google.script.run.withSuccessHandler(res).setDomains(getDomains());
+    }
+    
+    function changeCategorieList(){
+     var res=function(text){
+     document.getElementById('_categoryTable').innerHTML=text;
+    };
+    google.script.run.withSuccessHandler(res).setCategorie(document.getElementById('_newCategory').value);
+    }
+    
+    var _pageCount=0;
+    
+    function changeFormsPage(value){ 
+     var res=function(){
+       document.getElementById('_formsList').innerHTML=text;
+     };
+     _pageCount+=value;
+      alert(_pageCount);
+   //   google.script.run.withSuccessHandler(res).setCategorie(currentValue,value);
+    }
+
+/*=======================MENU JAVASCRIPT START========================================================*/
+
+/*=======================MENU JAVASCRIPT END==========================================================*/
+
+</script>

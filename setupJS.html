@@ -1,0 +1,15 @@
+<script> 
+  
+   function setupForm(form) {
+  addContent(animation);
+  var res = (form.rootId.value === '')?form.folderId.value:form.rootId.value;
+    google.script.run.withSuccessHandler(successInstall).withUserObject(form).install(res,getDomains());
+  }
+  
+   function successInstall(text,form){
+  addContent("");
+   alert(text);
+   document.getElementById('setupLink').style='visibility:visible;';
+  }
+  
+</script>

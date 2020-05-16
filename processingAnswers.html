@@ -1,0 +1,60 @@
+<?!= createHeader('Опрацювання документів'); 
+var file=Data.GetElementInList(mngrFile+userEmail,MimeType.GOOGLE_SHEETS)[0];
+if(file!==undefined){
+var ss=SpreadsheetApp.openById(file.ID);
+var add=0;
+?>
+
+<div>
+<input class="container" id="div_container1" type="checkbox">
+<label for="div_container1">Фільтри</label>
+<div><!--container-->
+Документ:<select style='margin:0 1%;' class="combobox_cl" id='sheetName'>
+<? var temp=ss.getSheets();
+for(var s=0; s<temp.length; s++) {?>
+<option value="<?!= temp[s].getName(); ?>"><?!= (temp[s].getName()===mainSheet)?'Загальна таблиця':temp[s].getName(); ?></option>
+<? } ?>
+</select>
+Кількість записів:<select style='margin:0 1%;' class="combobox_cl" id='sheetCount'>
+<option value='5'>5</option>
+<option value='10'>10</option>
+<option value='15' selected>15</option>
+<option value='20'>20</option>
+<option value='30'>30</option>
+</select>
+Статус:<select style='margin:0 1%;' class="combobox_cl" id='status'>
+<? for(var j in _status){?>
+<option value=<?!= j; ?>><?!= _status[j]; ?></option>
+<? } ?>
+</select><br><br>
+<input type='button' class="button_cl" value='Застосувати' onclick="applyFilter(true);">
+<input type='button' class="button_cl" value='Очистити всю історію документів' onclick="clearHistory(true);">
+</div><!--container-->
+</div>
+
+<hr> 
+<div id='historyTable'>
+<table> <thead>
+<?
+var data=ss.getSheetByName(mainSheet).getDataRange().getValues();
+var headers=getFormHeaders(data[0]);
+for(var i=0; i <= headers.sender+1; i++){
+?>
+<td><?!= headers.formHeaders[i].toString(); ?> </td>
+<? } ?> 
+<td><?!= headers.formHeaders[headers.lastEdit+1].toString(); ?></td>
+</thead>
+<?
+var temp=(data.length<21)?data.length:21;
+for(var row=1; row<temp;row++){ ?><tr class="<?!= getStatus(data[row][headers.status].toString()); ?> _answers" onclick="details(event,'<?!= ss.getId(); ?>','<?!= data[row][headers.answerId].toString(); ?>','<?!= data[row][headers.document].toString(); ?>');"><td><?!= row; ?></td><?
+for(var col=0; col<headers.answerId;col++){
+?>
+<td><?!= data[row][col].toString(); ?></td>
+<? } ?>
+<td><?!= data[row][headers.lastEdit].toString(); ?></td>
+</tr> <? } ?>
+</table>
+</div>
+<? } else { ?>
+<div>Історія документів порожня.<br><br><button class="button_cl" onclick="t('forms');">На головну</button></div>
+<? } ?>

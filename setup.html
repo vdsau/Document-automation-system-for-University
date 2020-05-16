@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<?!= include('styles'); ?>
+</head>
+<body>
+<p><span id="sys_not_installed">Схоже, що система ще не встановлена...</span></p>
+<form id="myForm" onsubmit="setupForm(this);">
+<p >Введіть ID каталогу для встановлення : <input name="rootId" id="rootId" class="border_element" type="text" /></p> або
+<p >Оберіть каталог на Вашому Google Drive для встановлення : <select name='folderId' class="border_element"> 
+<? var folders = DriveApp.getRootFolder().getFolders();
+while(folders.hasNext()) {
+var folder = folders.next();
+?>
+<option value='<?!= folder.getId();?>'>
+<?!= folder.getName(); ?>
+</option>
+<? } ?>
+</select><content style='z-index:9999;'></content> </p>
+<p style='border:3px solid red; border-radius:10%;padding:1%;width:35%;'>
+<strong style='color:red;'>Важливо!</strong><br>Каталог, в який буде встановлюватись система, має мати права доступу : <br>
+<strong style='color:red; font-size:1.1em;'>" Для всіх в домені "</strong>
+</p><hr>
+<div>
+<div id='_domains' style='width:30%;'>
+<div id='domainBlock' style='margin:2% 0;'><p><span>Домен та статус:</span><br><span style='margin-bottom:1%;font-size:0.9em;font-style:italic;'>наприклад, домен - std.edu.ua, статус - студент</span></p>
+Домен: <input id='domainValue' type='text' style='margin-bottom:1%;' class='border_element' value='<?!= parseEmail(Session.getActiveUser().getEmail()); ?>'><br>
+Статус: <input id='statusValue' type='text' class='border_element' style='margin-bottom:1%;'></div>
+</div>
+<input type='button' value='+' style='background-color:royalblue;color:white;' class='border_element' onclick="addDomain();">
+<input type='button' value='-' style='background-color:royalblue;color:white;' class='border_element' onclick="removeDomain();">
+<input type='button' value='Очистити' style='background-color:royalblue;color:white;' class='border_element' onclick="clearDomains();"></div><hr>
+<input type="submit" class="button border_element" value="Встановити"/>
+<a id='setupLink' class='button border_element' href='<?!= SitesApp.getActiveSite().getUrl(); ?>'>Ввійти в систему</a>
+</form>
+<?!= include('commonJS');?>
+<?!= include('JS');?>
+<?!= include('setupJS'); ?>
+</body>
+</html>
+
+

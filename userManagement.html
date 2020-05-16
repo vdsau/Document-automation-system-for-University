@@ -1,0 +1,69 @@
+<?!= createHeader('Керування користувачами'); ?>
+<div class="admin_panel">
+<div>
+<input class="container" id="div_container1" type="checkbox">
+<label for="div_container1">Керування менеджерами</label>
+<div><!--container-->
+
+<div>
+<input class="container" id="div_container11" type="checkbox">
+<label for="div_container11">Перелік менеджерів</label>
+<div><!--container-->
+<table id="managers_table"><thead>
+<tr><th>№</th><th>E-Mail</th></tr></thead>
+<? var managers=SpreadsheetApp.openById(getElementInList('Managers',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName('Managers'); 
+var data=managers.getDataRange().getValues();
+for(var i=1; i<data.length; i++){
+?>
+<tr><td><?!= i; ?></td><td><?!= data[i][0]; ?></td></tr>
+<? } ?>
+</table><!--managers_table-->
+</div><!--container-->
+</div>
+
+
+<div>
+<input class="container" id="div_container12" type="checkbox">
+<label for="div_container12">Перелік закріплених форм</label>
+<div><!--container-->
+<table id="managers_table"><thead>
+<tr><th>№</th><th>E-Mail</th><th>Закріплені форми ( id форми/ id документа )</th></tr></thead>
+<? var managers=SpreadsheetApp.openById(getElementInList('Managers',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName(mainSheet); 
+var data=managers.getDataRange().getValues();
+for(var i=1; i<data.length; i++){
+var formData=JSON.parse(data[i][1].toString());
+?>
+<tr><td><?!= i; ?></td><td><?!= data[i][0]; ?></td><td>Форма: <?!= formData.form; ?><br><hr>Документ: <?!= formData.doc; ?></td></tr>
+<? } ?>
+</table><!--managers_table-->
+</div><!--container-->
+</div>
+
+<div>
+<input class="container" id="div_container13" type="checkbox">
+<label for="div_container13">Додати нового менеджера</label>
+<div><!--container-->
+E-mail нового менеджера: <input type="text" id="manager_email_input" class="textbox_cl">
+<input type="button" class="button_cl" value="Додати" onclick="addManager(document.getElementById('manager_email_input').value);">
+</div><!--container-->
+</div>
+
+
+</div><!--container-->
+</div>
+<div>
+<? var admins_users = SpreadsheetApp.openById(getElementInList('Managers',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName('Admins').getDataRange().getValues();?>
+<input class="container" id="div_container4" type="checkbox">
+<label for="div_container4">Перелік адміністраторів системи</label>
+<div><!--container-->
+<table id="administrators_table"><thead>
+<tr><th>№</th><th>E-Mail</th></tr></thead>
+<? for (var i=1; i< admins_users.length; i++){ ?>
+<tr><td><?!= i; ?></td><td><?!= admins_users[i]; ?></td></tr>
+<? } ?>
+</table><!--administrators_table-->
+</div><!--container-->
+</div>
+
+
+</div><!--admin_panel-->

@@ -1,0 +1,55 @@
+<?!= createHeader('Додати документ'); ?>
+<form id='addForm'>
+<p>Заголовок для документа : <input type='text' class="textbox_cl" name='title' disabled value="<?!= defaultText; ?>"></p>
+<div>Оберіть призначення &nbsp;<font style='color:red;'>*</font>&nbsp;&nbsp;:&nbsp;&nbsp;<select name='destination' class="combobox_cl">
+<option value="<?!= defaultText; ?>"><?!= defaultText; ?></option> 
+<? 
+var statuses=SpreadsheetApp.openById(getElementInList('Domain',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName(mainSheet).getDataRange().getValues();
+for(var i=1; i< statuses.length; i++){
+var temp=statuses[i][1];
+?>
+<option value='<?!= temp; ?>'><?!= temp; ?></option>
+<? } ?>
+</select>
+</div><br>
+
+<div>Оберіть категорію &nbsp;<font style='color:red;'>*</font>&nbsp;&nbsp;:&nbsp;<select class="combobox_cl" name='category'>
+<option value="<?!= defaultText; ?>"><?!= defaultText; ?></option>
+<? var categories=SpreadsheetApp.openById(getElementInList('General',MimeType.GOOGLE_SHEETS)[0].ID).getSheetByName('Categories').getDataRange().getValues();
+for(var i=1; i< categories.length; i++){
+var categorie=categories[i][0];  ?>
+<option value="<?!= categorie; ?>"><?!= categorie; ?></option>
+<? } ?>
+</select>
+</div><br>
+
+<div>
+Оберіть форму&nbsp;<font style='color:red;'>*</font>&nbsp;&nbsp;:&nbsp;&nbsp;
+<select name='formName' style='max-width:80%;' class="combobox_cl" onchange='createFileName();'>
+<option value="<?!= defaultText; ?>"><?!= defaultText; ?></option> 
+<? var docs=DriveApp.getRootFolder().getFilesByType(MimeType.GOOGLE_DOCS);
+var files=DriveApp.getRootFolder().getFilesByType(MimeType.GOOGLE_FORMS);
+while(files.hasNext()){
+var file=files.next();
+?>
+  <option value='<?!= file.getId(); ?>'>
+   <?!= file.getName(); ?>
+  </option>
+  <? } ?>
+</select><br><br>
+Оберіть шаблон документа <font style='color:red; max-width:80%;'>*</font>&nbsp;&nbsp;:&nbsp;&nbsp;<select name='docsName' class="combobox_cl">
+<option value="<?!= defaultText; ?>"><?!= defaultText; ?></option> 
+<? while(docs.hasNext()){
+var doc=docs.next();
+?>
+  <option value='<?!= doc.getId(); ?>'>
+   <?!= doc.getName(); ?>
+  </option>
+  <? } ?>
+</select><br><hr><font style='color:red;'>*</font> - файл повинен бути заздалегідь завантажений на власний Google Drive.<br>
+</div>
+<br><br><input type='button' class="button_cl" value='Надіслати' onclick='addTemplateJS();'> 
+</form>
+
+
+

@@ -1,0 +1,41 @@
+<script>
+
+// Prevent forms from submitting.
+      function preventFormSubmit() {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+      }
+  window.addEventListener('load', preventFormSubmit);
+  
+  var animation="<div class='spinner'></div>";
+  
+   function addContent(text){
+     document.getElementsByTagName('content')[0].innerHTML=text;
+  }
+  
+   function _deleteAccept(text){
+   var res=confirm("Ви дійсно хочете видалити "+text+"?");
+   return res;
+  }
+  
+    function out(item){
+  var res='';
+  for(var i in item)
+    res+=i+" : "+item[i]+"<br>";
+     return res;
+  }
+  
+   function t(text) {
+     addContent(animation);
+     google.script.run.withSuccessHandler(addContent)/*.withFailureHandler(notFound)*/.openElement(text);
+  }
+  
+  function notFound(){
+   addContent("<div>Сторінка не знайдена.</div><br><button class='button border_element' onclick=\"t('forms');\">На головну</button>");
+  }
+ 
+</script>
